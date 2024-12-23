@@ -231,7 +231,7 @@ private void searchAndCopyFiles() {
             }
         }
     } else {
-        System.out.println("No files found.");
+        JOptionPane.showMessageDialog(frame,"No files found.");
     }
 }
 
