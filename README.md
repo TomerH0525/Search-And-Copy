@@ -1,2 +1,3 @@
 # Search-And-Copy
-Java swing application to search txt file name containing a string and copying it to a destination folder
+Java swing application to search text files containing a string in their name and copying it to a specified folder
+
