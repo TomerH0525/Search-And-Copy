@@ -230,6 +230,11 @@ private void searchAndCopyFiles() {
                 }
             }
         }
+        if (!searchStrings.isEmpty()){
+            JOptionPane.showMessageDialog(frame,"No files found with the requested strings : \n" +
+                    searchStrings.toString());
+        }
+
     } else {
         JOptionPane.showMessageDialog(frame,"No files found.");
     }
