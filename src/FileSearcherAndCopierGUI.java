@@ -208,14 +208,17 @@ private void searchAndCopyFiles() {
 
     if (files != null && files.length > 0) {
         for (File file : files) {
-            if (file.getName().endsWith(".txt")) {
+            String filename = file.getName();
+
+            if (filename.toLowerCase().endsWith(".txt")) { //check if the file ends with txt extension doesn't matter if its capital or not.
                 for (int i = 0; i < searchStrings.size(); i++) {
                     String searchString = searchStrings.get(i);
-                    if (file.getName().contains(searchString)) {
+
+                    if (filename.contains(searchString)) {
                         try {
-                            File destinationFile = new File(destinationDirectory, file.getName());
+                            File destinationFile = new File(destinationDirectory, filename);
                             Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            System.out.println("Copied " + file.getName() + " to " + destinationFile.getAbsolutePath());
+                            System.out.println("Copied " + filename + " to " + destinationFile.getAbsolutePath());
                             searchStrings.remove(i); // Remove the matched string found in the directory
                             i--; // because of file removal adjust index to match the remaining number of strings to search
                             break;
