@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -21,6 +22,7 @@ public class FileSearcherAndCopierGUI {
     private JLabel sourceDirectoryPath2Label;
     private JTextField destinationDirectoryPath2;
     private JLabel destinationDirectoryPath2Label;
+    private boolean searchDuplicates = false;
 
 //    public FileSearcherAndCopierGUI() {
 //        frame = new JFrame("File Searcher and Copier");
@@ -105,143 +107,171 @@ public class FileSearcherAndCopierGUI {
 //    }
 //}
 
-public FileSearcherAndCopierGUI() {
-    frame = new JFrame("File Searcher and Copier");
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setMinimumSize(new Dimension(500,350));
-    frame.setPreferredSize(new Dimension(500,400));
-    frame.setMaximumSize(new Dimension(550, 400));
-    frame.setResizable(Boolean.FALSE);
+    public FileSearcherAndCopierGUI() {
+        frame = new JFrame("File Searcher and Copier");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setMinimumSize(new Dimension(500, 350));
+        frame.setPreferredSize(new Dimension(500, 400));
+        frame.setMaximumSize(new Dimension(550, 400));
+//    frame.setResizable(Boolean.FALSE);
 
-    JPanel panel = new JPanel();
-    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-    panel.setMinimumSize(new Dimension(500,350));
-    panel.setPreferredSize(new Dimension(500,400));
-    panel.setMaximumSize(new Dimension(550, 400));
-
-
-    FlowLayout flowlayout = new FlowLayout();
-    JPanel panel4 = new JPanel(new FlowLayout());
-
-    searchStringsTextArea = new JTextArea(5, 20);
-    JScrollPane scrollPane = new JScrollPane(searchStringsTextArea);
-    JTextPane scrollpaneLabel = new JTextPane();
-    scrollpaneLabel.setText("to begin searching files to copy please provide the next things: \n 1.Source directory to search the files \n 2.Destination directory to copy and paste the found files \n 3.the strings to search in source directory");
-    panel4.add(scrollpaneLabel);
-    panel4.add(scrollPane);
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setMinimumSize(new Dimension(500, 350));
+        panel.setPreferredSize(new Dimension(500, 400));
+        panel.setMaximumSize(new Dimension(550, 400));
 
 
-    JPanel panel2 = new JPanel();
-    panel2.setLayout(new FlowLayout());
+        FlowLayout flowlayout = new FlowLayout();
+        JPanel panel4 = new JPanel(new FlowLayout());
+
+        searchStringsTextArea = new JTextArea(5, 20);
+        JScrollPane scrollPane = new JScrollPane(searchStringsTextArea);
+        JTextPane scrollpaneLabel = new JTextPane();
+        scrollpaneLabel.setText("to begin searching files to copy please provide the next things: \n 1.Source directory to search the files \n 2.Destination directory to copy and paste the found files \n 3.the strings to search in source directory");
+        panel4.add(scrollpaneLabel);
+        panel4.add(scrollPane);
 
 
-    sourceDirectoryPath2 = new JTextField();
-    sourceDirectoryPath2.setColumns(20);
-    sourceDirectoryPath2Label = new JLabel("Directory to search in : ");
-    sourceDirectoryPath2Label.setText("Directory to search in : ");
-
-    sourceDirectoryPath2Label.setLabelFor(sourceDirectoryPath2);
-
-    panel2.add(sourceDirectoryPath2Label);
-    panel2.add(sourceDirectoryPath2);
+        JPanel panel2 = new JPanel();
+        panel2.setLayout(new FlowLayout());
 
 
-    destinationDirectoryPath2 = new JTextField();
-    destinationDirectoryPath2.setColumns(20);;
-    destinationDirectoryPath2Label = new JLabel("Directory to search in : ");
-    destinationDirectoryPath2Label.setText("Destination folder to copy to : ");
+        sourceDirectoryPath2 = new JTextField();
+        sourceDirectoryPath2.setColumns(20);
+        sourceDirectoryPath2Label = new JLabel("Directory to search in : ");
+        sourceDirectoryPath2Label.setText("Directory to search in : ");
 
-    destinationDirectoryPath2Label.setLabelFor(destinationDirectoryPath2);
+        sourceDirectoryPath2Label.setLabelFor(sourceDirectoryPath2);
 
-    panel2.add(destinationDirectoryPath2Label);
-    panel2.add(destinationDirectoryPath2);
-
-
-    panel4.add(panel2);
+        panel2.add(sourceDirectoryPath2Label);
+        panel2.add(sourceDirectoryPath2);
 
 
-    searchAndCopyButton = new JButton("Search and Copy");
-    panel4.add(searchAndCopyButton);
-    searchAndCopyButton.addActionListener(new ActionListener() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            sourceDirectoryPath = sourceDirectoryPath2.getText().replaceAll("\\\\", "\\\\\\\\").toString();
-            destinationDirectoryPath = destinationDirectoryPath2.getText().replaceAll("\\\\","\\\\\\\\").toString();
-            System.out.println("sourceDirectoryPath = "+sourceDirectoryPath);
-            System.out.println("destinationDirectoryPath = "+destinationDirectoryPath);
-            searchAndCopyFiles();
-        }
-    });
-    panel.add(panel4, BorderLayout.PAGE_START);
+        destinationDirectoryPath2 = new JTextField();
+        destinationDirectoryPath2.setColumns(20);
+        ;
+        destinationDirectoryPath2Label = new JLabel("Directory to search in : ");
+        destinationDirectoryPath2Label.setText("Destination folder to copy to : ");
+
+        destinationDirectoryPath2Label.setLabelFor(destinationDirectoryPath2);
+
+        panel2.add(destinationDirectoryPath2Label);
+        panel2.add(destinationDirectoryPath2);
+
+
+        panel4.add(panel2);
+
+
+        searchAndCopyButton = new JButton("Search and Copy");
+        panel4.add(searchAndCopyButton);
+        searchAndCopyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sourceDirectoryPath = sourceDirectoryPath2.getText().replaceAll("\\\\", "\\\\\\\\").toString();
+                destinationDirectoryPath = destinationDirectoryPath2.getText().replaceAll("\\\\", "\\\\\\\\").toString();
+                System.out.println("sourceDirectoryPath = " + sourceDirectoryPath);
+                System.out.println("destinationDirectoryPath = " + destinationDirectoryPath);
+                searchAndCopyFiles();
+            }
+        });
+        panel.add(panel4, BorderLayout.PAGE_START);
 //    panel.add(panel3,BorderLayout.CENTER);
 
-    frame.add(panel);
-    frame.setVisible(true);
+        frame.add(panel);
+        frame.setVisible(true);
 
-    // Set default paths (you can modify these)
+        // Set default paths (you can modify these)
 
-}
-
-private void searchAndCopyFiles() {
-    String[] initialSearchStrings = searchStringsTextArea.getText().split("\n");
-    ArrayList<String> searchStrings = new ArrayList<>(Arrays.asList(initialSearchStrings));
-
-    File sourceDirectory = new File(sourceDirectoryPath);
-    File destinationDirectory = new File(destinationDirectoryPath);
-
-    if (!sourceDirectory.exists() || !sourceDirectory.isDirectory()) {
-        JOptionPane.showMessageDialog(frame, "Invalid source directory path.");
-        return;
     }
 
-    if (!destinationDirectory.exists()) {
-        if (!destinationDirectory.mkdirs()) {
-            JOptionPane.showMessageDialog(frame, "Failed to create destination directory.");
-            return;
-        }
-    } else if (!destinationDirectory.isDirectory()) {
-        JOptionPane.showMessageDialog(frame, "Destination path is not a directory.");
-        return;
-    }
+    private void searchAndCopyFiles() {
+        String[] initialSearchStrings = searchStringsTextArea.getText().split("\n");
+        ArrayList<String> searchStrings = new ArrayList<>(Arrays.asList(initialSearchStrings));
 
-    File[] files = sourceDirectory.listFiles();
+        //creating FileFilter to use instead of iterating normaly...
+        //testing performance and speed
+        FileFilter fileFilter = new FileFilter() {
+            @Override
+            public boolean accept(File file) {
+                if (!file.isFile() || searchStrings.isEmpty() || file.getName().toLowerCase().endsWith(".txt")) {
+                    return false;
 
-    if (files != null && files.length > 0) {
-        for (File file : files) {
-            String filename = file.getName();
+                } else {
+                    for (int i = 0; i < searchStrings.size(); i++) {
+                        if (file.getName().contains(searchStrings.get(i))) {
 
-            if (filename.toLowerCase().endsWith(".txt")) { //check if the file ends with txt extension doesn't matter if its capital or not.
-                for (int i = 0; i < searchStrings.size(); i++) {
-                    String searchString = searchStrings.get(i);
-
-                    if (filename.contains(searchString)) {
-                        try {
-                            File destinationFile = new File(destinationDirectory, filename);
-                            Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            System.out.println("Copied " + filename + " to " + destinationFile.getAbsolutePath());
-                            searchStrings.remove(i); // Remove the matched string found in the directory
-                            i--; // because of file removal adjust index to match the remaining number of strings to search
-                            break;
-                        } catch (IOException ex) {
-                            System.err.println("Error copying file: " + ex.getMessage());
+                            if (!searchDuplicates) {
+                                searchStrings.remove(i);
+                            }
+                            return true;
                         }
                     }
                 }
-                if (searchStrings.isEmpty()) { // Check if all search strings have been matched
-                    JOptionPane.showMessageDialog(frame,"All search strings have been matched and copied.");
-                    return; // Exit the function early
-                }
+                return false;
             }
-        }
-        if (!searchStrings.isEmpty()){
-            JOptionPane.showMessageDialog(frame,"No files found with the requested strings : \n" +
-                    searchStrings.toString());
+        };
+
+
+        File sourceDirectory = new File(sourceDirectoryPath);
+        File destinationDirectory = new File(destinationDirectoryPath);
+
+        if (!sourceDirectory.exists() || !sourceDirectory.isDirectory()) {
+            JOptionPane.showMessageDialog(frame, "Invalid source directory path.");
+            return;
         }
 
-    } else {
-        JOptionPane.showMessageDialog(frame,"No files found.");
+        if (!destinationDirectory.exists()) {
+            if (!destinationDirectory.mkdirs()) {
+                JOptionPane.showMessageDialog(frame, "Failed to create destination directory.");
+                return;
+            }
+        } else if (!destinationDirectory.isDirectory()) {
+            JOptionPane.showMessageDialog(frame, "Destination path is not a directory.");
+            return;
+        }
+
+        File[] files = sourceDirectory.listFiles();
+
+        File[] files2 = sourceDirectory.listFiles(fileFilter);
+        System.out.println(Arrays.toString(files2));
+
+        if (files != null && files.length > 0) {
+            for (File file : files) {
+                String filename = file.getName();
+
+                if (filename.toLowerCase().endsWith(".txt")) { //check if the file ends with txt extension doesn't matter if its capital or not.
+                    for (int i = 0; i < searchStrings.size(); i++) {
+                        String searchString = searchStrings.get(i);
+
+                        if (filename.contains(searchString)) {
+                            try {
+                                File destinationFile = new File(destinationDirectory, filename);
+                                Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                                System.out.println("Copied " + filename + " to " + destinationFile.getAbsolutePath());
+                                searchStrings.remove(i); // Remove the matched string found in the directory
+                                i--; // because of file removal adjust index to match the remaining number of strings to search
+                                break;
+                            } catch (IOException ex) {
+                                System.err.println("Error copying file: " + ex.getMessage());
+                            }
+                        }
+                    }
+                    if (searchStrings.isEmpty()) { // Check if all search strings have been matched
+                        JOptionPane.showMessageDialog(frame, "All search strings have been matched and copied.");
+                        return; // Exit the function early
+                    }
+                }
+            }
+            if (!searchStrings.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "No files found with the requested strings : \n" +
+                        searchStrings.toString());
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(frame, "No files found.");
+        }
     }
-}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new FileSearcherAndCopierGUI());
