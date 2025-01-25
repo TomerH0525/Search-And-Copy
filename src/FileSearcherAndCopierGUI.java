@@ -67,7 +67,7 @@ public class FileSearcherAndCopierGUI {
 
 
         //main frame body
-        searchTextArea = new JTextArea(8, 20);
+        searchTextArea = new JTextArea(12, 20);
         JScrollPane scrollPane = new JScrollPane(searchTextArea);
 
         flag_SearchDuplicates = new JCheckBox();
@@ -111,9 +111,7 @@ public class FileSearcherAndCopierGUI {
         flagsPanel.add(label_ExactMatch);
         flagsPanel.add(flag_ExactMatch);
 
-
         firstPanel.add(flagsPanel);
-
 
         JPanel directoryPanel = new JPanel(new GridLayout(0, 2, 5, 0));
 
@@ -201,13 +199,14 @@ public class FileSearcherAndCopierGUI {
                     JOptionPane.showMessageDialog(mainFrame, "All search strings have been matched and copied.");
                     System.out.println(searchStrings.toString());
                 } else{
+                    System.out.println("Searched string with the number of times it was found : ");
                     searchStrings.forEach((k,v) -> {
-
+                        System.out.println("String: '"+k+"' , found: "+v+" times..");
                     });
                 }
             } else {
                 JOptionPane.showMessageDialog(mainFrame, "No files found with the requested strings : \n" +
-                        searchStrings.toString());
+                        searchStrings.keySet());
             }
 
 //        } else {
