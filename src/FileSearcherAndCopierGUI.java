@@ -182,7 +182,18 @@ public class FileSearcherAndCopierGUI {
             System.out.println(searchStrings.toString());
         } else {
             System.out.println("Searched string with the number of times it was found (כל פריטי החיפוש עם ערך החיפוש וכמות הפעמים שנמצא) : ");
-            searchStrings.forEach((k, v) -> System.out.println("String(ערך החיפוש): '" + k + "' , found(נמצא): " + v + " times.."));
+            System.out.println("Found strings :\n");
+            searchStrings.forEach((k,v) -> {
+                if (v > 0){
+                    System.out.println("String(ערך החיפוש): '" + k + "' , found(נמצא): " + v + " times..");
+                }
+            });
+            System.out.println("\n\n\nNot found strings :");
+            searchStrings.forEach((k,v) -> {
+                if (v == 0){
+                    System.out.println("String(ערך החיפוש): '" + k + "' , found(נמצא): " + v + " times..");
+                }
+            });
             System.out.println(
                     "Total of subdirectories searched (סה'כ תיקיות שנמצאו) : "+subDirsCounter);
 
