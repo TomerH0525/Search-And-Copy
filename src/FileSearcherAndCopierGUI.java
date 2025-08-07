@@ -26,6 +26,7 @@ public class FileSearcherAndCopierGUI {
     private JButton helpButton;
     private int subDirsCounter = 0;
     public HashMap<String, Integer> searchStrings = new HashMap<>();
+    public HashMap<String, String> errFiles = new HashMap<>();
 
 
     public FileSearcherAndCopierGUI() {
@@ -136,41 +137,50 @@ public class FileSearcherAndCopierGUI {
             searchStrings.put(string, 0);
         }
 
+        File sourceDirectory = new File(directoryPath);
+        File destinationDirectory = new File(DestinationPath);
+
         FileFilter fileFilter = file -> {
             String fileName = file.getName();
             String lowerCaseFileName = fileName.toLowerCase();
-            if (file.isFile() && !searchStrings.isEmpty()) {
-                for (String searchString : searchStrings.keySet()) {
-                    if (fileName.contains(searchString)) {
-                        if (lowerCaseFileName.endsWith("jpg") || lowerCaseFileName.endsWith("png")) {
-                            searchStrings.put(searchString, searchStrings.get(searchString) + 1);
+        if (file.isFile() && !searchStrings.isEmpty() && (lowerCaseFileName.endsWith("jpg") || lowerCaseFileName.endsWith("png"))) {
+                    for (String searchString : searchStrings.keySet()) {
+
+                        if (flag_ExactMatch.isSelected() && Objects.equals(fileName.split("\\.")[0], searchString)){
                             if (!flag_SearchDuplicates.isSelected()) {
-                                System.out.println("found first match! for the string = " + searchString+", deleting from search pool...");
+                                System.out.println("found first match! for the string = " + searchString + ", deleting from search pool...");
                                 searchStrings.remove(searchString);
+                                return true;
                             }
                             return true;
+                        }else if (fileName.contains(searchString)) {
+//                            if (lowerCaseFileName.endsWith("jpg") || lowerCaseFileName.endsWith("png")) {
+//                                if (lowerCaseFileName.endsWith("txt")){
+                                searchStrings.put(searchString, searchStrings.get(searchString) + 1);
+                                if (!flag_SearchDuplicates.isSelected()) {
+                                    System.out.println("found first match! for the string = " + searchString + ", deleting from search pool...");
+                                    searchStrings.remove(searchString);
+                                }
+                                return true;
+//                            }
                         }
                     }
-                }
             }
             return false;
         };
 
-        File sourceDirectory = new File(directoryPath);
-        File destinationDirectory = new File(DestinationPath);
-
         if (!sourceDirectory.exists() || !sourceDirectory.isDirectory()) {
-            JOptionPane.showMessageDialog(mainFrame, "Invalid source directory path (נתיב תיקיית חיפוש לא תקינה).");
+            JOptionPane.showMessageDialog(mainFrame, "Invalid source directory path.");
             return;
         }
 
         if (!destinationDirectory.exists()) {
             if (!destinationDirectory.mkdirs()) {
-                JOptionPane.showMessageDialog(mainFrame, "Failed to create destination directory (נכשל ביצירת תיקיית העברה).");
+                JOptionPane.showMessageDialog(mainFrame, "Failed to create destination directory.");
                 return;
             }
         } else if (!destinationDirectory.isDirectory()) {
-            JOptionPane.showMessageDialog(mainFrame, "Destination path is not a directory (נתיב תיקיית העברה לא תקינה).");
+            JOptionPane.showMessageDialog(mainFrame, "Destination path is not a directory.");
             return;
         }
 
@@ -178,32 +188,42 @@ public class FileSearcherAndCopierGUI {
         recursiveSearchAndCopy(sourceDirectory, destinationDirectory, fileFilter);
 
         if (searchStrings.isEmpty()) {
-            JOptionPane.showMessageDialog(mainFrame, "All search strings have been matched and copied (כל פריטי החיפוש נמצאו והועברו בהצלחה).");
+            JOptionPane.showMessageDialog(mainFrame, "All search strings have been matched and copied.");
             System.out.println(searchStrings.toString());
         } else {
-            System.out.println("Searched string with the number of times it was found (כל פריטי החיפוש עם ערך החיפוש וכמות הפעמים שנמצא) : ");
-            System.out.println("Found strings :\n");
+            System.out.println("Searched string with the number of times it was found : ");
+            System.out.println("Found strings :");
             searchStrings.forEach((k,v) -> {
                 if (v > 0){
-                    System.out.println("String(ערך החיפוש): '" + k + "' , found(נמצא): " + v + " times..");
+                    System.out.println("String: '" + k + "' , found: " + v + " times..");
                 }
             });
-            System.out.println("\n\n\nNot found strings :");
+            System.out.println("\nNot found strings :");
             searchStrings.forEach((k,v) -> {
                 if (v == 0){
-                    System.out.println("String(ערך החיפוש): '" + k + "' , found(נמצא): " + v + " times..");
+                    System.out.println("String: '" + k + "' , found: " + v + " times..");
                 }
             });
-            System.out.println(
-                    "Total of subdirectories searched (סה'כ תיקיות שנמצאו) : "+subDirsCounter);
+            System.out.println("\nFiles that encountered an ERROR :");
+            if (!errFiles.isEmpty()) {
 
+                errFiles.forEach((k, v) -> {
+                    System.err.println(v + " | " + v);
+                });
+            }else{
+                System.out.println("NO ERRORS!");
+            }
         }
+        System.out.println("total of subdirectories found : "+subDirsCounter);
         long endTime = System.currentTimeMillis();
         System.out.println("Start date (תאריך התחלה): "+new Date(startTime));
         System.out.println("End date (תאריך סיום): "+new Date(endTime));
         int searchTimeMinutes = (int) ((endTime - startTime)/1000/60);
         int searchTimeSeconds = (int) ((endTime - startTime)/1000) - (searchTimeMinutes*60);
-        System.out.println("The search took (הזמן שלקח החיפוש): "+searchTimeMinutes+" minutes(דקות) "+searchTimeSeconds+" seconds(שניות)");
+        System.out.println("The search took: "+searchTimeMinutes+" minutes "+searchTimeSeconds+" seconds");
+
+        subDirsCounter = 0; //reset counter after each search.
+        errFiles.clear(); //reset errFiles
     }
 
     private void recursiveSearchAndCopy(File sourceDir, File destDir, FileFilter filter) {
@@ -212,12 +232,15 @@ public class FileSearcherAndCopierGUI {
         if (files != null) {
             for (File file : files) {
                 String filename = file.getName();
-                System.out.println("Found file to transfer (נמצא ערך חיפוש, מתחיל העברה): "+filename);
+                System.out.println("Found file to transfer: "+filename);
                 try { //copy files to destination
                     File destinationFile = new File(destDir, filename);
+                    System.out.println(destDir+"- and "+filename);
                     Files.copy(file.toPath(), destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    System.err.println(e.getMessage());
+                    System.err.println("couldnt copy file with name: "+filename+"\n located at: "+file.getAbsolutePath());
+                    errFiles.put(filename,"couldnt copy file with name: "+filename+"\n located at: "+file.getAbsolutePath());
                 }
             }
         }
@@ -227,7 +250,7 @@ public class FileSearcherAndCopierGUI {
         if (subDirs != null) {
             subDirsCounter += subDirs.length; //Counter of subdirectories found in source directory.
             for (File subDir : subDirs) {
-                System.out.println("Subdirectory found (נמצאה תיקייה לחיפוש) : "+subDir);
+                System.out.println("Subdirectory found: "+subDir);
                 //Recursively call to copy matched files and search for subdirectories again
                 recursiveSearchAndCopy(subDir, destDir, filter);
             }
@@ -240,7 +263,7 @@ public class FileSearcherAndCopierGUI {
                 UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |
                      UnsupportedLookAndFeelException e) {
-                System.err.println("tried to set application look and feel and failed with the following exception (בוצע ניסיון לשנות נראות החלון אך נכשל, מעביר לתצוגה רגילה) -> " + e);
+                System.err.println("tried to set application look and feel and failed with the following exception -> \n" + e.getMessage());
             }
 
             SwingUtilities.invokeLater(FileSearcherAndCopierGUI::new);
