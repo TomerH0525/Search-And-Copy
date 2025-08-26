@@ -2,7 +2,7 @@
 
 # 
 
-# A desktop utility built for H\&O to streamline the process of locating and copying image files from legacy directories. Designed to assist with product identification workflows using \*Degem Sapak\* and \*Degem\* codes.
+# A desktop utility built for a work place ive worked in to streamline the process of locating and copying image files from legacy directories. Designed to assist with product identification workflows using \*Degem Sapak\* and \*Degem\* codes.
 
 # 
 
@@ -10,7 +10,7 @@
 
 # 
 
-# At H\&O, we often needed to retrieve multiple product images from a large archive of historical files. This tool simplifies that task by allowing users to input a list of search terms and automatically copy matching files to a designated output folder.
+# At the work place ive worked, we often needed to retrieve multiple product images from a large archive of historical files. This tool simplifies that task by allowing users to input a list of search terms and automatically copy matching files to a designated output folder.
 
 # 
 
@@ -40,9 +40,9 @@
 
 # 2\. Enter your list of search strings (one per line).
 
-# 3\. Select the source directory containing archived images.
+# 3\. Provide source directory containing archived images.
 
-# 4\. Select the destination directory where matched files will be copied.
+# 4\. Provide destination directory where matched files will be copied.
 
 # 5\. Toggle the flags:
 
