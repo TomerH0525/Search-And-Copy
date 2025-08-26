@@ -1,3 +1,5 @@
+package com.tomer.searchAndCopier;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
@@ -6,7 +8,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
-import java.util.List;
 
 public class FileSearcherAndCopierGUI {
 
@@ -31,16 +32,10 @@ public class FileSearcherAndCopierGUI {
 
     public FileSearcherAndCopierGUI() {
 
-        List<Image> icons = new ArrayList<Image>();
-        icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/Project-IconX16.png")));
-        icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/Project-IconX32.png")));
-        icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/Project-IconX64.png")));
-        icons.add(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/resources/Project-IconX128.png")));
         //init main frame
         mainFrame = new JFrame("Search and copy files");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setPreferredSize(new Dimension(500, 400));
-        mainFrame.setIconImages(icons); //setting icon to frame
         mainFrame.pack();
         mainFrame.setResizable(Boolean.FALSE);
 
@@ -153,16 +148,9 @@ public class FileSearcherAndCopierGUI {
                                 return true;
                             }
                             return true;
-                        }else if (fileName.contains(searchString)) {
-//                            if (lowerCaseFileName.endsWith("jpg") || lowerCaseFileName.endsWith("png")) {
-//                                if (lowerCaseFileName.endsWith("txt")){
+                        }else if (lowerCaseFileName.contains(searchString.toLowerCase())) {
                                 searchStrings.put(searchString, searchStrings.get(searchString) + 1);
-                                if (!flag_SearchDuplicates.isSelected()) {
-                                    System.out.println("found first match! for the string = " + searchString + ", deleting from search pool...");
-                                    searchStrings.remove(searchString);
-                                }
                                 return true;
-//                            }
                         }
                     }
             }
