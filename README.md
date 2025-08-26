@@ -5,7 +5,7 @@
 
  
 
- \## 🧠 Purpose
+ ## 🧠 Purpose
 
  
 
@@ -13,7 +13,7 @@
 
 
 
- \## 🚀 Features
+ ## 🚀 Features
 
  
 
@@ -30,7 +30,7 @@
 
  
 
- \## 🖥️ How to Use
+ ## 🖥️ How to Use
 
  
 
@@ -46,7 +46,7 @@
 
  &nbsp;  - \*\*Exact Match\*\*: Only match full filenames.
 
-# &nbsp;  - \*\*Search Duplicates\*\*: Allow multiple matches per string.
+ &nbsp;  - \*\*Search Duplicates\*\*: Allow multiple matches per string.
 
-# 6\. Click \*\*Search and Copy\*\*.
+ 6\. Click \*\*Search and Copy\*\*.
 
