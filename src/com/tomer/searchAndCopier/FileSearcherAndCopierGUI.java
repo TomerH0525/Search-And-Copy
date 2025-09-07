@@ -135,25 +135,51 @@ public class FileSearcherAndCopierGUI {
         File sourceDirectory = new File(directoryPath);
         File destinationDirectory = new File(DestinationPath);
 
+        //Custom FileFilter for image files (JPG/PNG) that match search criteria.
+        //Supports exact filename matching and partial substring matching based on user-selected flags.
+        //Modifies the searchStrings map to track duplicates or remove matched entries.
+        //Used to filter files during directory scanning for targeted image processing.
         FileFilter fileFilter = file -> {
             String fileName = file.getName();
             String lowerCaseFileName = fileName.toLowerCase();
-        if (file.isFile() && !searchStrings.isEmpty() && (lowerCaseFileName.endsWith("jpg") || lowerCaseFileName.endsWith("png"))) {
-                    for (String searchString : searchStrings.keySet()) {
 
-                        if (flag_ExactMatch.isSelected() && Objects.equals(fileName.split("\\.")[0], searchString)){
-                            if (!flag_SearchDuplicates.isSelected()) {
-                                System.out.println("found first match! for the string = " + searchString + ", deleting from search pool...");
-                                searchStrings.remove(searchString);
-                                return true;
-                            }
-                            return true;
-                        }else if (lowerCaseFileName.contains(searchString.toLowerCase())) {
-                                searchStrings.put(searchString, searchStrings.get(searchString) + 1);
-                                return true;
-                        }
-                    }
+            //Early exit if file is not a regular file, search pool is empty, or not a supported image
+            if (!file.isFile() || searchStrings.isEmpty() ||
+                    !(lowerCaseFileName.endsWith("jpg") || lowerCaseFileName.endsWith("png"))) {
+                return false;
             }
+
+            //Loop through all search strings to find a match
+            for (String searchString : searchStrings.keySet()) {
+                String baseFileName = fileName.split("\\.")[0]; // filename without extension
+                String searchStringLowerCase = searchString.toLowerCase();
+
+                //Exact match logic
+                if (flag_ExactMatch.isSelected()) {
+                    if (Objects.equals(baseFileName, searchString)) {
+                        if (!flag_SearchDuplicates.isSelected()) {
+                            System.out.println("Found exact match for: " + searchString + ", removing from pool...");
+                            searchStrings.remove(searchString);
+                        }
+                        return true;
+                    } else {
+                        continue; //not an exact match, try to find next match in searchStrings map.
+                    }
+                }
+
+                //exactMatch is not selected searching for files with searchString in fileName partially.
+                if (lowerCaseFileName.contains(searchStringLowerCase)) {
+                    if (flag_SearchDuplicates.isSelected()) {
+                        searchStrings.put(searchString, searchStrings.get(searchString) + 1);
+                    } else {
+                        System.out.println("Search duplicate is disabled, found " + searchString + "!");
+                        searchStrings.remove(searchString);
+                    }
+                    return true;
+                }
+            }
+
+            //No match found for any search string
             return false;
         };
 
@@ -238,7 +264,7 @@ public class FileSearcherAndCopierGUI {
         if (subDirs != null) {
             subDirsCounter += subDirs.length; //Counter of subdirectories found in source directory.
             for (File subDir : subDirs) {
-                System.out.println("Subdirectory found: "+subDir);
+                System.out.println("Subdirectory found: "+subDir.getAbsolutePath());
                 //Recursively call to copy matched files and search for subdirectories again
                 recursiveSearchAndCopy(subDir, destDir, filter);
             }
